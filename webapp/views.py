@@ -1,4 +1,4 @@
-from flask import Flask, request, session
+from flask import Flask, request, session, redirect, url_for
 from flask import render_template
 from flaskext.mysql import MySQL
 from webapp import app
@@ -19,6 +19,13 @@ cursor =conn.cursor()
 @app.route('/')
 def home():
     return render_template("home.html")
+
+
+@app.route('/logout')
+def logout():
+    session.pop('loggedin', None)
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -42,3 +49,14 @@ def register():
     msg = ''
 
     return render_template("register.html", msg = msg)
+
+@app.route('/details')
+def details():
+    if 'username' in session:
+        cursor.execute('SELECT * FROM user WHERE username =%s', (session['username']))
+        account = cursor.fetchone()
+        return render_template("details.html", account=account)
+    return render_template("login.html", msg='Please Log In First')
+    # if 'username' in session:
+    #     return f'Logged in as {session["username"]}'
+    # return 'You are not logged in'
