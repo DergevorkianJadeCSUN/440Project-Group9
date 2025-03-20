@@ -1,8 +1,9 @@
 {% extends "layout.html" %}
-{% block title %}
-Home
-{% endblock %}
+
+{% block title %}Home{% endblock %}
+
 {% block content %}
-Home Page for COMP440 Project
-<div align="center" class="msg">{{msg}}</div>
+    <h1>Welcome, {{ current_user.username }}!</h1>
+    <p>Email: {{ current_user.email }}</p>
+    <p>Phone: {{ current_user.phone }}</p>
 {% endblock %}
