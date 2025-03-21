@@ -27,6 +27,8 @@ def logout():
 def sign_up():
     if request.method == 'POST':
         username = request.form.get('username')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
         email = request.form.get('email')
         phone = request.form.get('phone')
         password1 = request.form.get('password1')
@@ -37,7 +39,7 @@ def sign_up():
         elif User.query.filter((User.username == username) | (User.email == email) | (User.phone == phone)).first():
             flash('Username, email, or phone already exists', 'danger')
         else:
-            new_user = User(username=username, email=email, phone=phone)
+            new_user = User(username=username, email=email, phone=phone, first_name=first_name, last_name=last_name)
             new_user.set_password(password1)
             db.session.add(new_user)
             db.session.commit()
