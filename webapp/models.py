@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     rental = relationship("Rental", backref='users')
+    review = relationship("Review", backref='users')
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -29,7 +30,18 @@ class Rental(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     title = db.Column(db.String(255), nullable = False)
     description = db.Column(db.String(255), nullable = False)
-    feature = db.Column(db.String(255), nullable = False)
+    features = db.Column(db.String(255), nullable = False)
     price = db.Column(db.String(255), nullable = False)
-    created_on = db.Column(db.Date, nullable = False, server_default=func.now())
+    date = db.Column(db.Date, nullable = False, server_default=func.now())
     user = db.Column(db.String(50), db.ForeignKey('users.username'))
+    review = relationship("Review", backref='rentals')
+
+
+class Review(db.Model):
+    __tablename__ = 'reviews'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    quality = db.Column(db.String(25), nullable = False)
+    description =  db.Column(db.String(255), nullable = False)
+    date = db.Column(db.Date, nullable=False, server_default=func.now())
+    user = db.Column(db.String(50), db.ForeignKey('users.username'))
+    unit = db.Column(db.Integer, db.ForeignKey('rentals.id'))
