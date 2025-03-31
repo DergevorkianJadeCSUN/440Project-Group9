@@ -1,2 +1,11 @@
 [project]
 name = "webapp"
+version = "0.1.0"
+description = "A Flask web application for COMP440: Database Design"
+dependencies = [
+    "Flask==3.1.0",
+    "Flask-Bcrypt==1.0.1",
+    "Flask-Login==0.6.2",
+    "Flask-SQLAlchemy==3.0.3",
+    "PyMySQL==1.1.1"
+]

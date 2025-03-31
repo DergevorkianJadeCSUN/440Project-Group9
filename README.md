@@ -1,6 +1,12 @@
 # 440Project-Group9
 Project for COMP440: Database Design
 
-Set up database using the schema defined in `setup.sql` 
+Install requirements:
+pip install -r requirements.txt
 
-Run using `flask --app webapp run`
+Run application:
+python main.py
+
+Navigate to http://127.0.0.1:5000/ in your web browser.
+
+Demo Video: https://youtu.be/aI9uj6oUVgw
