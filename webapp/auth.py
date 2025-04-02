@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
-from .models import User
+from .models import User, Rental
 from . import db
 
 auth = Blueprint('auth', __name__)
@@ -53,3 +53,19 @@ def sign_up():
 def details():
     return render_template("details.html", user=current_user)
 
+@auth.route('/post', methods = ['GET', 'POST'])
+@login_required
+def post():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        desc = request.form.get('desc')
+        features = request.form.get('features')
+        price = request.form.get('price')
+
+        new_unit = Rental(title = title, description = desc, features = features, price = price, user = current_user.username)
+        db.session.add(new_unit)
+        db.session.commit()
+        flash('New rental unit created!', 'message')
+        return redirect(url_for('views.home'))
+
+    return render_template("post.html", user = current_user)

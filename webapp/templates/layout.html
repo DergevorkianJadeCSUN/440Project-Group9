@@ -12,6 +12,7 @@
             <a href="{{ url_for('views.home') }}" class="navbar-brand navbar-item">Home</a>
             {% if current_user.is_authenticated %}
                 <a href="{{ url_for('auth.logout') }}" class="navbar-brand navbar-item">Logout</a>
+                <a href="{{ url_for('auth.post') }}" class="navbar-brand navbar-item">Post Unit</a>
             {% else %}
                 <a href="{{ url_for('auth.login') }}" class="navbar-brand navbar-item">Login</a>
                 <a href="{{ url_for('auth.sign_up') }}" class="navbar-brand navbar-item">Sign Up</a>

@@ -32,7 +32,7 @@ class Rental(db.Model):
     description = db.Column(db.String(255), nullable = False)
     features = db.Column(db.String(255), nullable = False)
     price = db.Column(db.String(255), nullable = False)
-    date = db.Column(db.Date, nullable = False, server_default=func.now())
+    date = db.Column(db.DateTime(timezone=True), nullable = False, server_default=func.current_date())
     user = db.Column(db.String(50), db.ForeignKey('users.username'))
     review = relationship("Review", backref='rentals')
 

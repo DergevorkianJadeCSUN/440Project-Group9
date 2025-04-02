@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h2>Register your unit</h2>
+    <form method="POST">
+        <label>Title:</label>
+        <input type="text" name="title" required>
+        <br>
+        <label>Description:</label> <p>
+        <textarea id="desc" name="desc" rows="4" cols="50"></textarea>
+        <br>
+        <label>Features:</label> <p>
+        <textarea id="features" name="features" rows="4" cols="50"></textarea>
+        <br>
+        <label>Monthly Price:</label>
+        <input type="number" name="price" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+{% endblock %}
