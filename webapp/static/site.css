@@ -30,3 +30,16 @@
     padding: 5px;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+tr:nth-of-type(odd) {
+  background-color: #ccc;
+}
+tr:nth-of-type(even) {
+  background-color: #eee;
+}
+
+tr th[scope="col"] {
+  background-color: lightslategray;
+  color: #fff;
+}
+

@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<form method ='POST'>
+    <label>Feature Search: </label>
+    <input type="text" name = "terms" required> <button type="submit">Search</button>
+</form>
+<table>
+    <tbody>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Description</th>
+            <th scope="col">Features</th>
+            <th scope="col">Price</th>
+            <th scope="col">Date Posted</th>
+            <th scope="col">Posted By</th>
+        </tr>
+        {% for Rental in units %}
+        <tr>
+            <td>{{Rental.title}}</td>
+            <td>{{Rental.description}}</td>
+            <td>{{Rental.features}}</td>
+            <td>{{Rental.price}}</td>
+            <td>{{Rental.date}}</td>
+            <td>{{Rental.user}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

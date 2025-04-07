@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy import select
+
 from .models import User, Rental
 from . import db
 
@@ -69,3 +71,11 @@ def post():
         return redirect(url_for('views.home'))
 
     return render_template("post.html", user = current_user)
+
+@auth.route('/search', methods = ['GET', 'POST'])
+@login_required
+def search():
+    if request.method == 'POST':
+        terms = request.form.get('terms')
+        return render_template('search.html', units = Rental.query.filter_by(Rental.features.contains(f'%{terms}')))
+    return render_template('search.html', units = Rental.query.all())
