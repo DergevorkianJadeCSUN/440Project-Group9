@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}Review{% endblock %}
+
+{% block content %}
+    <h2>Review the following unit:</h2>
+    <table>
+        <tbody>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Features</th>
+                <th scope="col">Price</th>
+                <th scope="col">Date Posted</th>
+                <th scope="col">Posted By</th>
+            </tr>
+            {% for Rental in unit %}
+                <tr>
+                    <td>{{Rental.title}}</td>
+                    <td>{{Rental.description}}</td>
+                    <td>{{Rental.features}}</td>
+                    <td>{{Rental.price}}</td>
+                    <td>{{Rental.date}}</td>
+                    <td>{{Rental.user}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form method="POST">
+        <label for="quality">Select Unit Quality</label>
+
+        <select name="quality" id="quality">
+            <option value="excellent">Excellent</option>
+            <option value="good">Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+        </select>
+
+        <br>
+        <label>Description:</label> <p>
+        <textarea id="desc" name="desc" rows="4" cols="50"></textarea>
+        <p>
+        <button type="submit">Submit Review</button>
+    </form>
+{% endblock %}

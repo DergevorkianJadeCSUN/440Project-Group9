@@ -16,6 +16,7 @@
             <th scope="col">Price</th>
             <th scope="col">Date Posted</th>
             <th scope="col">Posted By</th>
+            <th scope="col">Review Link</th>
         </tr>
         {% for Rental in units %}
         <tr>
@@ -25,6 +26,7 @@
             <td>{{Rental.price}}</td>
             <td>{{Rental.date}}</td>
             <td>{{Rental.user}}</td>
+            <td><a href="{{ url_for('auth.review', id=Rental.id)}}">Review</a></td>
         </tr>
         {% endfor %}
     </tbody>

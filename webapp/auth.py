@@ -79,3 +79,11 @@ def search():
         terms = request.form.get('terms')
         return render_template('search.html', units = Rental.query.filter_by(Rental.features.contains(f'%{terms}')))
     return render_template('search.html', units = Rental.query.all())
+
+@auth.route('/review/<id>', methods = ['GET', 'POST'])
+@login_required
+def review(id):
+    if Rental.query.filter((Rental.id == id) & (Rental.user == current_user.username)).first():
+        flash("You can't review your own posting", "message")
+        return render_template('search.html', units = Rental.query.all())
+    return render_template('review.html', unit= Rental.query.filter(Rental.id == id))
