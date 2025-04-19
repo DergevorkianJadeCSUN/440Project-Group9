@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}Leave a Review{% endblock %}
+
+{% block content %}
+<h2>Review This Rental</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Features</th>
+            <th>Price</th>
+            <th>Date</th>
+            <th>Posted By</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ unit.title }}</td>
+            <td>{{ unit.description }}</td>
+            <td>{{ unit.features }}</td>
+            <td>{{ unit.price }}</td>
+            <td>{{ unit.date }}</td>
+            <td>{{ unit.user }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<form method="POST">
+    <label for="quality">Select Quality:</label>
+    <select name="quality" id="quality" required>
+        <option value="excellent">Excellent</option>
+        <option value="good">Good</option>
+        <option value="fair">Fair</option>
+        <option value="poor">Poor</option>
+    </select>
+    <br><br>
+
+    <label for="description">Review Description:</label><br>
+    <textarea name="description" id="description" rows="4" cols="50" required></textarea>
+    <br><br>
+
+    <button type="submit">Submit Review</button>
+</form>
+{% endblock %}

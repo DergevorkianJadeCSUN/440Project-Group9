@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
-from sqlalchemy import select
+from sqlalchemy import func, and_
+from datetime import date
 
-from .models import User, Rental
+from .models import User, Rental, Review
 from . import db
 
 auth = Blueprint('auth', __name__)
@@ -41,13 +42,13 @@ def sign_up():
         elif User.query.filter((User.username == username) | (User.email == email) | (User.phone == phone)).first():
             flash('Username, email, or phone already exists', 'danger')
         else:
-            new_user = User(username=username, email=email, phone=phone, first_name=first_name, last_name=last_name)
+            new_user = User(username=username, email=email, phone=phone,
+                            first_name=first_name, last_name=last_name)
             new_user.set_password(password1)
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user)
             return redirect(url_for('views.home'))
-
     return render_template('sign_up.html')
 
 @auth.route('/details')
@@ -55,35 +56,38 @@ def sign_up():
 def details():
     return render_template("details.html", user=current_user)
 
-@auth.route('/post', methods = ['GET', 'POST'])
+@auth.route('/post', methods=['GET', 'POST'])
 @login_required
 def post():
+    today = date.today()
+    daily_post_count = Rental.query.filter(
+        and_(Rental.user == current_user.username, func.date(Rental.date) == today)
+    ).count()
+
+    if daily_post_count >= 2:
+        flash('You have reached the maximum of 2 rental units per day.', 'warning')
+        return redirect(url_for('views.home'))
+
     if request.method == 'POST':
         title = request.form.get('title')
         desc = request.form.get('desc')
         features = request.form.get('features')
         price = request.form.get('price')
 
-        new_unit = Rental(title = title, description = desc, features = features, price = price, user = current_user.username)
+        new_unit = Rental(title=title, description=desc, features=features,
+                          price=price, user=current_user.username)
         db.session.add(new_unit)
         db.session.commit()
-        flash('New rental unit created!', 'message')
+        flash('New rental unit created!', 'success')
         return redirect(url_for('views.home'))
 
-    return render_template("post.html", user = current_user)
+    return render_template("post.html", user=current_user)
 
-@auth.route('/search', methods = ['GET', 'POST'])
+@auth.route('/search', methods=['GET', 'POST'])
 @login_required
 def search():
     if request.method == 'POST':
         terms = request.form.get('terms')
-        return render_template('search.html', units = Rental.query.filter_by(Rental.features.contains(f'%{terms}')))
-    return render_template('search.html', units = Rental.query.all())
-
-@auth.route('/review/<id>', methods = ['GET', 'POST'])
-@login_required
-def review(id):
-    if Rental.query.filter((Rental.id == id) & (Rental.user == current_user.username)).first():
-        flash("You can't review your own posting", "message")
-        return render_template('search.html', units = Rental.query.all())
-    return render_template('review.html', unit= Rental.query.filter(Rental.id == id))
+        results = Rental.query.filter(Rental.features.like(f'%{terms}%')).all()
+        return render_template('search.html', units=results)
+    return render_template('search.html', units=Rental.query.all())

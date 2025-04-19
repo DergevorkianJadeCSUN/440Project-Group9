@@ -1,7 +1,7 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-import os
 
 # Initialize database
 DB_NAME = "users.db"
@@ -16,8 +16,11 @@ def create_app():
 
     from .auth import auth
     from .views import views
+    from .reviews import reviews_bp
+
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(views, url_prefix='/')
+    app.register_blueprint(reviews_bp, url_prefix='/')
 
     from .models import User
     create_database(app)
@@ -37,4 +40,3 @@ def create_database(app):
         with app.app_context():
             db.create_all()
         print("Database created!")
-

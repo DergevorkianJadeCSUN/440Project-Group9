@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}Reviews for {{ rental.title }}{% endblock %}
+
+{% block content %}
+<h2>Reviews for: {{ rental.title }}</h2>
+<p><strong>Description:</strong> {{ rental.description }}</p>
+<p><strong>Features:</strong> {{ rental.features }}</p>
+<p><strong>Price:</strong> {{ rental.price }}</p>
+<p><strong>Posted By:</strong> {{ rental.user }}</p>
+<hr>
+
+{% if reviews %}
+    <table>
+        <thead>
+            <tr>
+                <th>Rating</th>
+                <th>Description</th>
+                <th>Reviewed By</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+            <tr>
+                <td>{{ review.quality }}</td>
+                <td>{{ review.description }}</td>
+                <td>{{ review.user }}</td>
+                <td>{{ review.date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No reviews for this rental yet.</p>
+{% endif %}
+
+<a href="{{ url_for('auth.search') }}">← Back to Search</a>
+{% endblock %}

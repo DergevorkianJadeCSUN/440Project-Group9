@@ -3,32 +3,46 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
-<form method ='POST'>
-    <label>Feature Search: </label>
-    <input type="text" name = "terms" required> <button type="submit">Search</button>
-</form>
-<table>
-    <tbody>
-        <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Description</th>
-            <th scope="col">Features</th>
-            <th scope="col">Price</th>
-            <th scope="col">Date Posted</th>
-            <th scope="col">Posted By</th>
-            <th scope="col">Review Link</th>
-        </tr>
-        {% for Rental in units %}
-        <tr>
-            <td>{{Rental.title}}</td>
-            <td>{{Rental.description}}</td>
-            <td>{{Rental.features}}</td>
-            <td>{{Rental.price}}</td>
-            <td>{{Rental.date}}</td>
-            <td>{{Rental.user}}</td>
-            <td><a href="{{ url_for('auth.review', id=Rental.id)}}">Review</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <h2>Search for Units by Feature</h2>
+    <form method="POST">
+        <label for="terms">Enter feature keyword:</label>
+        <input type="text" id="terms" name="terms">
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Rental Results</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Features</th>
+                <th>Price</th>
+                <th>Date</th>
+                <th>Posted By</th>
+                <th>Review</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for Rental in units %}
+            <tr>
+                <td>{{ Rental.title }}</td>
+                <td>{{ Rental.description }}</td>
+                <td>{{ Rental.features }}</td>
+                <td>{{ Rental.price }}</td>
+                <td>{{ Rental.date }}</td>
+                <td>{{ Rental.user }}</td>
+                <td>
+                    <a href="{{ url_for('reviews.review', id=Rental.id) }}">Leave Review</a> |
+                    <a href="{{ url_for('reviews.rental_reviews', id=Rental.id) }}">View Reviews</a>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2><a href="{{ url_for('reviews.all_reviews') }}">View Reviews Left by Other Users</a></h2>
 {% endblock %}
