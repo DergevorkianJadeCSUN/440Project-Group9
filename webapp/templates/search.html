@@ -7,6 +7,12 @@
     <form method="POST">
         <label for="terms">Enter feature keyword:</label>
         <input type="text" id="terms" name="terms">
+        <label for="sortby">Sort Results by:</label>
+        <select name="sortby" id="sortby" required>
+            <option value="price">Price</option>
+            <option value="date">Date Posted</option>
+            <option value="user">User</option>
+        </select>
         <button type="submit">Search</button>
     </form>
 
