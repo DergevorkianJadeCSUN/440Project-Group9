@@ -17,10 +17,12 @@ def create_app():
     from .auth import auth
     from .views import views
     from .reviews import reviews_bp
+    from .search import search_bp
 
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(reviews_bp, url_prefix='/')
+    app.register_blueprint(search_bp, url_prefix='/')
 
     from .models import User
     create_database(app)

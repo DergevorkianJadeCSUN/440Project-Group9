@@ -5,8 +5,14 @@
 {% block content %}
     <h2>Search for Users by Feature</h2>
     <form method="POST">
-        <input type="checkbox" id="critics" name="critics">
-        <label for="critics">Only show users who only leave negative reviews</label>
+        <label for="criteria">Select Filtering Criteria:</label>
+        <select name="criteria", id="criteria">
+            <option value="">--Choose--</option>
+            <option value="critics">Users who only leave negative reviewers</option>
+            <option value="good-posters">Users who only receive positive reviews</option>
+        </select>
+<!--        <input type="checkbox" id="critics" name="critics">-->
+<!--        <label for="critics">Only show users who only leave negative reviews</label>-->
         <button type="submit">Search</button>
     </form>
 
