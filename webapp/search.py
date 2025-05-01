@@ -48,7 +48,7 @@ def search_user():
                 interim_results = (db.session.execute(select(User)
                                                       .filter(User.username.not_in((select(User.username)
                                                                                     .join(User.review)
-                                                                                    .filter(not_(or_(Review.quality=='poor',Review.quality=='fair')))
+                                                                                    .filter(not_(Review.quality=='poor'))
                                                                                     ))
                                                               )
                                                       .group_by(User.username)
