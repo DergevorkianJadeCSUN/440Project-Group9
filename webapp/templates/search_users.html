@@ -6,13 +6,16 @@
     <h2>Search for Users by Feature</h2>
     <form method="POST">
         <label for="criteria">Select Filtering Criteria:</label>
-        <select name="criteria", id="criteria">
+        <select name="criteria" id="criteria" onchange="filterCheck(this)">
             <option value="">--Choose--</option>
             <option value="critics">Users who only leave negative reviewers</option>
             <option value="good-posters">Users who only receive positive reviews</option>
+            <option value="most-date">Users who posted most units on a given date</option>
         </select>
-<!--        <input type="checkbox" id="critics" name="critics">-->
-<!--        <label for="critics">Only show users who only leave negative reviews</label>-->
+        <div id="ifDate" style="display: none">
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date">
+        </div>
         <button type="submit">Search</button>
     </form>
 
@@ -35,5 +38,15 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <script>
+        function filterCheck(that) {
+            if (that.value == "most-date") {
+                document.getElementById("ifDate").style.display = "block";
+            } else {
+                document.getElementById("ifDate").style.display = "none";
+            }
+        }
+    </script>
 
 {% endblock %}
