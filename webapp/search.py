@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required
-from sqlalchemy import desc, select, not_, or_, func, alias, and_
+from sqlalchemy import desc, select, not_, or_, func, alias, and_, exists
 from sqlalchemy.orm import aliased
 
 from .models import User, Rental, Review
@@ -46,19 +46,15 @@ def search_user():
                     user_results[i] =  interim_results[i][0]
             case 'good-posters':
                 review_results = Review.query
-                interim_results = (db.session.execute(select(User)
-                                                      .filter(User.username.not_in((select(User.username)
-                                                                                    .join(User.review)
-                                                                                    .filter(not_(Review.quality=='poor'))
-                                                                                    ))
-                                                              )
-                                                      .group_by(User.username)
-                                                      )
-                                   .all())
-
-                user_results = [None] * len(interim_results)
-                for i in range(len(interim_results)):
-                    user_results[i] = interim_results[i][0]
+                RentalAlias = aliased(Rental)
+                ReviewAlias = aliased(Review)
+                poor_review_subquery = (
+                    db.session.query(RentalAlias.user)
+                    .join(ReviewAlias, RentalAlias.id == ReviewAlias.id)
+                    .filter(ReviewAlias.quality == 'poor')
+                    .subquery()
+                )
+                user_results = db.session.query(User).filter(User.username.in_(poor_review_subquery)).all()
             case 'most-date':
                 date = request.form.get("date")
                 rental_results = Rental.query.filter(Rental.date == date)
