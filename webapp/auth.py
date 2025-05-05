@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy import desc
+
 from .models import User, Rental
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -58,7 +60,16 @@ def search():
     results = {}  # Ensure this is passed to prevent Jinja2 error
     if request.method == 'POST':
         terms = request.form.get('terms')
-        rentals = Rental.query.filter(Rental.features.like(f'%{terms}%')).all()
+        match request.form.get('sortby'):
+            case 'date':
+                sort = Rental.date
+            case 'price':
+                sort = Rental.price
+            case 'user':
+                sort = Rental.user
+            case _:
+                sort = Rental.date
+        rentals = Rental.query.filter(Rental.features.like(f'%{terms}%')).order_by(desc(sort)).all()
         return render_template('search.html', units=rentals, users=users, results=results)
 
     return render_template('search.html', units=Rental.query.all(), users=users, results=results)
