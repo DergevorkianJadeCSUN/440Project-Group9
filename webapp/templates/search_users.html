@@ -3,7 +3,7 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
-    <h2>Search for Users by Feature</h2>
+    <h2>Search for Users</h2>
     <form method="POST">
         <label for="criteria">Select Filtering Criteria:</label>
         <select name="criteria" id="criteria" onchange="filterCheck(this)">
@@ -11,10 +11,17 @@
             <option value="critics">Users who only leave negative reviewers</option>
             <option value="good-posters">Users who only receive positive reviews</option>
             <option value="most-date">Users who posted most units on a given date</option>
+            <option value="features">Users who posted two units on one day with 2 features</option>
         </select>
         <div id="ifDate" style="display: none">
             <label for="date">Date</label>
             <input type="date" id="date" name="date">
+        </div>
+        <div id="ifFeatures" style="display: none">
+            <label for="featureX">Feature X</label>
+            <input type="text" id="featureX" name="featureX">
+            <label for="featureY">Feature Y</label>
+            <input type="text" id="featureY" name="featureY">
         </div>
         <button type="submit">Search</button>
     </form>
@@ -82,8 +89,13 @@
         function filterCheck(that) {
             if (that.value == "most-date") {
                 document.getElementById("ifDate").style.display = "block";
+                document.getElementById("ifFeatures").style.display = "none";
+            } else if (that.value == "features") {
+                document.getElementById("ifDate").style.display = "none";
+                document.getElementById("ifFeatures").style.display = "block";
             } else {
                 document.getElementById("ifDate").style.display = "none";
+                document.getElementById("ifFeatures").style.display = "none";
             }
         }
     </script>
