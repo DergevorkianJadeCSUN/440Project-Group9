@@ -1,12 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
-from sqlalchemy import func, and_, desc, select, not_
-from datetime import date
-
-from sqlalchemy.testing import not_in
-
-from .models import User, Rental, Review
+from .models import User, Rental
 from . import db
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import date
 
 auth = Blueprint('auth', __name__)
 
@@ -16,7 +13,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
+        if user and check_password_hash(user.password, password):
             login_user(user, remember=True)
             return redirect(url_for('views.home'))
         flash('Invalid username or password', 'danger')
@@ -32,10 +29,10 @@ def logout():
 def sign_up():
     if request.method == 'POST':
         username = request.form.get('username')
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
         email = request.form.get('email')
         phone = request.form.get('phone')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
 
@@ -45,43 +42,23 @@ def sign_up():
             flash('Username, email, or phone already exists', 'danger')
         else:
             new_user = User(username=username, email=email, phone=phone,
-                            first_name=first_name, last_name=last_name)
-            new_user.set_password(password1)
+                            first_name=first_name, last_name=last_name,
+                            password=generate_password_hash(password1))
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user)
             return redirect(url_for('views.home'))
+
     return render_template('sign_up.html')
 
-@auth.route('/details')
+@auth.route('/search', methods=['GET', 'POST'])
 @login_required
-def details():
-    return render_template("details.html", user=current_user)
-
-@auth.route('/post', methods=['GET', 'POST'])
-@login_required
-def post():
-    today = date.today()
-    daily_post_count = Rental.query.filter(
-        and_(Rental.user == current_user.username, func.date(Rental.date) == today)
-    ).count()
-
-    if daily_post_count >= 2:
-        flash('You have reached the maximum of 2 rental units per day.', 'warning')
-        return redirect(url_for('views.home'))
-
+def search():
+    users = []
+    results = {}  # Ensure this is passed to prevent Jinja2 error
     if request.method == 'POST':
-        title = request.form.get('title')
-        desc = request.form.get('desc')
-        features = request.form.get('features')
-        price = request.form.get('price')
+        terms = request.form.get('terms')
+        rentals = Rental.query.filter(Rental.features.like(f'%{terms}%')).all()
+        return render_template('search.html', units=rentals, users=users, results=results)
 
-        new_unit = Rental(title=title, description=desc, features=features,
-                          price=price, user=current_user.username)
-        db.session.add(new_unit)
-        db.session.commit()
-        flash('New rental unit created!', 'success')
-        return redirect(url_for('views.home'))
-
-    return render_template("post.html", user=current_user)
-
+    return render_template('search.html', units=Rental.query.all(), users=users, results=results)

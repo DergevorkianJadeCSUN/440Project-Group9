@@ -5,17 +5,15 @@
 {% block content %}
     <h2>Review the following unit:</h2>
     <table>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Features</th>
-                <th>Price</th>
-                <th>Date Posted</th>
-                <th>Posted By</th>
-            </tr>
-        </thead>
         <tbody>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Features</th>
+                <th scope="col">Price</th>
+                <th scope="col">Date Posted</th>
+                <th scope="col">Posted By</th>
+            </tr>
             <tr>
                 <td>{{ unit.title }}</td>
                 <td>{{ unit.description }}</td>
@@ -27,51 +25,46 @@
         </tbody>
     </table>
 
+    {% if error %}<p style="color: red">{{ error }}</p>{% endif %}
+
     <form method="POST">
-        <label for="quality">Select Unit Quality:</label><br>
+        <label for="quality">Select Unit Quality:</label>
         <select name="quality" id="quality" required>
-            <option value="">--Choose--</option>
+            <option disabled selected value>--Choose--</option>
             <option value="excellent">Excellent</option>
             <option value="good">Good</option>
             <option value="fair">Fair</option>
             <option value="poor">Poor</option>
         </select>
-
-        <br><br>
-
+        <br>
         <label for="description">Review Description:</label><br>
         <textarea id="description" name="description" rows="4" cols="50" required></textarea>
-
-        <br><br>
-
+        <br>
         <button type="submit">Submit Review</button>
     </form>
 
-    <hr>
+    {% if reviews %}
+        <h3>Reviews Left by Other Users</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Reviewer</th>
+                    <th>Rating</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr>
+                    <td>{{ review.user }}</td>
+                    <td>{{ review.quality }}</td>
+                    <td>{{ review.description }}</td>
+                    <td>{{ review.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 
-    <h2>Other Rental Units by Users</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Features</th>
-                <th>Price</th>
-                <th>Date</th>
-                <th>Posted By</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for rental in other_rentals %}
-            <tr>
-                <td>{{ rental.title }}</td>
-                <td>{{ rental.description }}</td>
-                <td>{{ rental.features }}</td>
-                <td>{{ rental.price }}</td>
-                <td>{{ rental.date }}</td>
-                <td>{{ rental.user }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 {% endblock %}

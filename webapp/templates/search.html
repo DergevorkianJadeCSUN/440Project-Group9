@@ -3,52 +3,76 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
-    <h2>Search for Units by Feature</h2>
-    <form method="POST">
-        <label for="terms">Enter feature keyword:</label>
-        <input type="text" id="terms" name="terms">
-        <label for="sortby">Sort Results by:</label>
-        <select name="sortby" id="sortby" required>
-            <option value="price">Price</option>
-            <option value="date">Date Posted</option>
-            <option value="user">User</option>
-        </select>
-        <button type="submit">Search</button>
-    </form>
+<h2>Search for Units by Feature</h2>
+<form method="POST" action="{{ url_for('auth.search') }}">
+    <label for="terms">Enter feature keyword:</label>
+    <input type="text" id="terms" name="terms">
+    <button type="submit">Search</button>
+</form>
 
-    <h2>Rental Results</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Features</th>
-                <th>Price</th>
-                <th>Date</th>
-                <th>Posted By</th>
-                <th>Review</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for Rental in units %}
-            <tr>
-                <td>{{ Rental.title }}</td>
-                <td>{{ Rental.description }}</td>
-                <td>{{ Rental.features }}</td>
-                <td>{{ Rental.price }}</td>
-                <td>{{ Rental.date }}</td>
-                <td>{{ Rental.user }}</td>
-                <td>
-                    <a href="{{ url_for('reviews.review', id=Rental.id) }}">Leave Review</a> |
-                    <a href="{{ url_for('reviews.rental_reviews', id=Rental.id) }}">View Reviews</a>
-                </td>
+<hr>
 
-            </tr>
+<h2>Find Users Who Posted Rentals with Two Different Features on Same Day</h2>
+<form method="POST" action="{{ url_for('reviews.cross_feature_users') }}">
+    <label for="feature1">Feature 1:</label>
+    <input type="text" id="feature1" name="feature1" required>
+    <label for="feature2">Feature 2:</label>
+    <input type="text" id="feature2" name="feature2" required>
+    <button type="submit">Find Users</button>
+</form>
+
+<hr>
+
+<h2>Rental Results</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Features</th>
+            <th>Price</th>
+            <th>Date</th>
+            <th>Posted By</th>
+            <th>Review</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for Rental in units %}
+        <tr>
+            <td>{{ Rental.title }}</td>
+            <td>{{ Rental.description }}</td>
+            <td>{{ Rental.features }}</td>
+            <td>{{ Rental.price }}</td>
+            <td>{{ Rental.date }}</td>
+            <td>{{ Rental.user }}</td>
+            <td>
+                {% if Rental.user != current_user.username %}
+                    <a href="{{ url_for('reviews.review', id=Rental.id) }}">Leave a Review</a>
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% for user, rentals in results.items() %}
+            {% for unit in rentals %}
+                <tr>
+                    <td>{{ unit.title }}</td>
+                    <td>{{ unit.description }}</td>
+                    <td>{{ unit.features }}</td>
+                    <td>{{ unit.price }}</td>
+                    <td>{{ unit.date }}</td>
+                    <td>{{ user }}</td>
+                    <td>
+                        {% if user != current_user.username %}
+                            <a href="{{ url_for('reviews.review', id=unit.id) }}">Leave a Review</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
             {% endfor %}
-        </tbody>
-    </table>
-
-    <hr>
-
-    <h2><a href="{{ url_for('reviews.all_reviews') }}">View Reviews Left by Other Users</a></h2>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

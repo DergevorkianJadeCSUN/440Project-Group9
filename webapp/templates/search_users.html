@@ -39,6 +39,45 @@
         </tbody>
     </table>
 
+    <hr>
+
+    <h2>Find Rentals by User with Only 'Excellent' or 'Good' Reviews</h2>
+    <form method="POST" action="{{ url_for('reviews.user_review_filter') }}">
+        <label for="username">Enter Username:</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">Filter</button>
+    </form>
+
+    {% if username %}
+        <h3>Results for: {{ username }}</h3>
+        {% if rentals %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Features</th>
+                        <th>Price</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rental in rentals %}
+                        <tr>
+                            <td>{{ rental.title }}</td>
+                            <td>{{ rental.description }}</td>
+                            <td>{{ rental.features }}</td>
+                            <td>{{ rental.price }}</td>
+                            <td>{{ rental.date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No qualifying rentals found for {{ username }}.</p>
+        {% endif %}
+    {% endif %}
+
     <script>
         function filterCheck(that) {
             if (that.value == "most-date") {
@@ -48,5 +87,4 @@
             }
         }
     </script>
-
 {% endblock %}
