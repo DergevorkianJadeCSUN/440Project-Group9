@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required
-from sqlalchemy import desc, select, not_, or_, func
+from sqlalchemy import desc, select, not_, or_, func, alias, and_
+from sqlalchemy.orm import aliased
 
 from .models import User, Rental, Review
 from . import db
@@ -73,6 +74,27 @@ def search_user():
                 interim_results = (db.session.execute(select(User)
                                                       .filter(User.username.in_(max_user_list_trimmed))
                                                       )).all()
+
+                user_results = [None] * len(interim_results)
+                for i in range(len(interim_results)):
+                    user_results[i] = interim_results[i][0]
+            case 'features':
+                review_results = Review.query
+                rental_results = Rental.query
+                feature_x = request.form.get("featureX")
+                feature_y = request.form.get("featureY")
+                rental1 = aliased(Rental, name='rental1')
+                rental2 = aliased(Rental, name='rental2')
+                interim_results = db.session.execute(select(User)
+                                                     .join(rental1)
+                                                     .join(rental2)
+                                                     .filter(rental1.id != rental2.id)
+                                                     .filter(rental1.features.like(f'%{feature_x}%'))
+                                                     .filter(rental2.features.like(f'%{feature_y}%'))
+                                                     .filter(rental1.date == rental2.date)
+                                                     .filter(rental1.user == rental2.user)
+                                                     .distinct()).all()
+
 
                 user_results = [None] * len(interim_results)
                 for i in range(len(interim_results)):
