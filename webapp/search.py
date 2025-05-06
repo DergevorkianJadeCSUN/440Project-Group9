@@ -49,15 +49,18 @@ def search_user():
                     user_results[i] =  interim_results[i][0]
             case 'good-posters':
                 review_results = Review.query
-                RentalAlias = aliased(Rental)
-                ReviewAlias = aliased(Review)
+                Rental_alias = aliased(Rental)
+                Review_alias = aliased(Review)
                 poor_review_subquery = (
-                    db.session.query(RentalAlias.user)
-                    .join(ReviewAlias, RentalAlias.id == ReviewAlias.id)
-                    .filter(ReviewAlias.quality == 'poor')
+                    db.session.query(Rental_alias.user)
+                    .join(Review_alias, Rental_alias.id == Review_alias.unit)
+                    .filter(Review_alias.quality == 'poor')
                     .subquery()
                 )
-                user_results = db.session.query(User).filter(User.username.in_(poor_review_subquery)).all()
+                user_results = (db.session.query(User)
+                                .filter(User.username.not_in(poor_review_subquery))
+                                .filter(User.username.in_(select(User.username)
+                                                          .join(Rental)))).all()
             case 'most-date':
                 date = request.form.get("date")
                 rental_results = Rental.query.filter(Rental.date == date)
