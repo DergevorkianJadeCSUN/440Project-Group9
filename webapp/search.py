@@ -36,8 +36,11 @@ def search_user():
                                                              User.username.not_in((select(User.username)
                                                                                    .join(User.review)
                                                                                    .filter(not_(Review.quality=="poor")))
-                                                                                  ))
-                                                      .group_by(User.username)
+                                                                                  ),
+                                                             User.username.in_(select(User.username)
+                                                                               .join(User.review)
+                                                                               .filter(Review.quality=="poor")))
+                                                     .group_by(User.username)
                                                       )
                                    .all())
                 print(interim_results)
