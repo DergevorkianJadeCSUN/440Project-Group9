@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request
 from flask_login import login_required
 from sqlalchemy import desc, select, not_, or_, func, alias, and_, exists
 from sqlalchemy.orm import aliased
+from sqlalchemy.testing import in_
 
 from .models import User, Rental, Review
 from . import db
@@ -106,3 +107,26 @@ def search_user():
 
         return render_template('search_users.html', users=user_results, rental=rental_results, review = review_results)
     return render_template('search_users.html', users = User.query.all(), rental= Rental.query, review = Review.query)
+
+@search_bp.route('/expensive-features', methods =['GET','POST'])
+@login_required
+def expensive_features():
+    rental_results = []
+    features = db.session.query(Rental.features).all()
+    feature_list = [item for sublist in features for item in sublist]
+    flattened_list = ','.join(feature_list)
+    trimmed_feature_list = [item.strip() for item in flattened_list.split(",")]
+    feature_set = set(trimmed_feature_list)
+    feature_set_list = list(feature_set)
+
+    print(feature_set_list)
+
+    for feature in feature_set_list:
+        feature_subq = select(Rental).filter(Rental.features.like(f'%{feature}%')).subquery()
+        max_price = db.session.execute(func.max(feature_subq.c.price)).scalar()
+        rental_results.append((feature, (Rental.query
+                                 .filter(Rental.features.like(f'%{feature}%'))
+                                 .filter(Rental.price == max_price).all())))
+    print(rental_results)
+    print(rental_results[0][1][0])
+    return render_template('expensive_features.html', units = rental_results, features = feature_set_list)

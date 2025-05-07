@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+
+
+<h2>Rental Results</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Feature</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Features</th>
+            <th>Price</th>
+            <th>Date</th>
+            <th>Posted By</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in range(units|length) %}
+            {% for j in range(units[i][1]|length) %}
+                <tr>
+                    <td>{{ units[i][0] }}</td>
+                    <td>{{ units[i][1][j].title }}</td>
+                    <td>{{ units[i][1][j].description }}</td>
+                    <td>{{ units[i][1][j].features }}</td>
+                    <td>{{ units[i][1][j].price }}</td>
+                    <td>{{ units[i][1][j].date }}</td>
+                    <td>{{ units[i][1][j].user }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
