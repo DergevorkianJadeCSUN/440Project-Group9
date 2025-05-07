@@ -118,6 +118,7 @@ def expensive_features():
     trimmed_feature_list = [item.strip() for item in flattened_list.split(",")]
     feature_set = set(trimmed_feature_list)
     feature_set_list = list(feature_set)
+    feature_set_list.sort()
 
     print(feature_set_list)
 
